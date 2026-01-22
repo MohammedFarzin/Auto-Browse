@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/MohammedFarzin/Auto-Browse/issues"
   },
-  "homepage": "https://github.com/MohammedFarzin/Auto-Browse#readme"
+  "homepage": "https://github.com/MohammedFarzin/Auto-Browse#readme",
+  "dependencies": {
+    "puppeteer-core": "^24.36.0"
+  }
 }
