@@ -1,38 +1,31 @@
 const puppeteer = require('puppeteer-core');
 
-async function scanPage(url) {
+async function getDomContent(url, selector) {
     const browser = await puppeteer.launch({
         executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         headless: true 
         });
     const page = await browser.newPage();
+    await page.goto(url, { waitUntil: 'networkidle0', timeout: 450000 });
 
-    page.on("console", msg => {
-        if (msg.text().includes('XSS_SUCCESS')){
-            console.log('Vunlerability Found: payload exectued in DOM!');
-        }
-    });
+    const data = await page.$$eval(selector, (elements) => {
+        return elements.map(el => ({
+            text: el.innerText.trim(),
+            html: el.innerHTML,
+            tag: el.tagName,
+            attributes: Array.from(el.attributes).reduce((acc, attr) => {
+                acc[attr.name] = attr.value;
+                return acc;
 
-    const payload = "';console.log('XSS_SUCCESS');//";
-    const targetUrl = `${url}#name=${encodeURIComponent(payload)}`;
+            }, {}),
+        }))
+    })
 
-    console.log(`Scanning: ${targetUrl}`);
-
-    try {
-        await page.goto(targetUrl, { waitUntil: 'networkidle0', timeout: 450000 });
-
-        const buttonSelector = '#submit-btn';
-        if (await page.$(buttonSelector)) {
-            await page.click(buttonSelector);
-        }
-    } catch (err) {
-        console.error("Scan Failed: ", err.message);
-    } finally {
-        await browser.close();
-        console.log("Scan Completed");
-    }
+    await browser.close();
+    return data;
 
 }
 
 
-scanPage('https://docs.browser-use.com/quickstart');
+
+getDomContent('https://docs.browser-use.com/quickstart', 'h2').then(console.log);
