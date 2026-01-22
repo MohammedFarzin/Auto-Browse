@@ -10,3 +10,4 @@ wheels/
 .venv
 .env
 browser-use
+node_modules
