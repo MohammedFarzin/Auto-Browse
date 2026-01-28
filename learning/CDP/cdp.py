@@ -16,7 +16,9 @@ def get_cdp_discovery():
             if tab['type'] == 'page':
                 print(f"🎯 Target Found: {tab['title']}")
                 print(f"🔗 WebSocket URL: {tab['webSocketDebuggerUrl']}")
-                return tab['webSocketDebuggerUrl']
+                print("--------------------------------")
+        return tabs
+
                 
     except requests.exceptions.ConnectionError:
         print("❌ ERROR: Connection Refused.")

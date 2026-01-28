@@ -12,9 +12,25 @@ async def get_axtree(url):
         client = await context.new_cdp_session(page)
 
         axtree = await client.send("Accessibility.getFullAXTree")
+        print(axtree['nodes'][0].keys())
         
-        print(json.dumps(axtree, indent=4))
+        for node in axtree['nodes']:
+            print("nodeId: ", node['nodeId'])
+
+            print("ignored: ", node.get('ignored', ''))
+            if node.get('ignored', ''):
+                print("--------------------------------")
+                continue
+            print("role: ", node.get('role', ''))
+            print("chromeRole: ", node.get('chromeRole', ''))
+            print("name: ", node.get('name', ''))
+            print("properties: ", node.get('properties', ''))
+            print("childIds: ", node.get('childIds', ''))
+            print("backendDOMNodeId: ", node.get('backendDOMNodeId', ''))
+            print("frameId: ", node.get('frameId', ''))
+            print("--------------------------------")
+
         await browser.close()
 
 if __name__ == "__main__":
-    asyncio.run(get_axtree("https://docs.browser-use.com/quickstart"))
+    asyncio.run(get_axtree("https://qa-lyncs.pioapp.net/batch-control"))
